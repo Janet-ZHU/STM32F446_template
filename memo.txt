@@ -1,0 +1,55 @@
+    //pa5_init(); // LED PA5 init
+    
+    // RCC->APB1ENR |= (1 << 28);
+    // PWR->CR |= PWR_CR_VOS;
+    // RCC->CR |= 1;
+    // //RCC->CR |= RCC_CR_HSICAL_4;
+    //     /* Enable Over-drive mode */
+    // PWR->CR |= PWR_CR_ODEN;
+    // while (!(PWR->CSR & PWR_CSR_ODRDY))
+    //     continue;
+    // /* Switch to Over-drive mode */
+    // PWR->CR |= PWR_CR_ODSWEN;
+    // while (!(PWR->CSR & PWR_CSR_ODSWRDY))
+    //     continue;
+    // RCC->CR |= 0x10 << RCC_CR_HSITRIM_Pos;
+    // //RCC->CR |=  
+    // //(8 <<RCC_PLLCFGR_PLLM_Pos) 
+    // RCC->CR &= ~(RCC_CR_PLLON << RCC_CR_PLLON_Pos); // disable PLL
+    // FLASH->ACR |= (FLASH_ACR_LATENCY_7WS << FLASH_ACR_LATENCY_Pos);
+    // // PLLM 2<= M <= 63 PLLN 50 <= N <= 432 PLLP=2,4,6,8
+    // // 0000 0000 0000 0000 0000 0000 0000 0000
+    // RCC->PLLCFGR = 0x00000000; //CFGR celar
+    // RCC->CFGR = 0x0;
+    // RCC->CFGR |= RCC_CFGR_PPRE1_DIV4 | RCC_CFGR_PPRE2_DIV16 ;
+    // RCC->PLLCFGR |= 0x8 ; // M
+    // RCC->PLLCFGR |= (0xB4 << RCC_PLLCFGR_PLLN_Pos); //N
+    // RCC->PLLCFGR &= ~(0b00 << RCC_PLLCFGR_PLLP_Pos); // P
+    // RCC->PLLCFGR |= (0x2 << RCC_PLLCFGR_PLLQ_Pos); //Q not use
+    // RCC->PLLCFGR |= (0b10 << RCC_PLLCFGR_PLLR_Pos); //R note use
+    // RCC->CFGR &= ~(0b0000 << RCC_CFGR_HPRE_Pos);
+    // RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSI << RCC_PLLCFGR_PLLSRC_Pos;
+    // RCC->CR |= RCC_CR_PLLON ;//| RCC_CR_HSION;
+    // while(!(RCC->CR & RCC_CR_PLLRDY));
+    // RCC->CFGR |= RCC_CFGR_SW_PLL << RCC_CFGR_SW_Pos;
+    // RCC->CFGR |- RCC_CFGR_SWS_HSI << RCC_CFGR_SWS_Pos;
+    // while( (RCC->CFGR & RCC_CFGR_SWS_Msk) != RCC_CFGR_SWS_PLL );
+
+	    //SystemCoreClockUpdate();
+    /* 
+    HSIはもとからONなのでPLLの設定がうまくいっていない可能性がたかい｡
+    PLLはPLL自体を有効にし､正しく設定し､システムクロックとして設定する必要がある｡
+    RCC->CFGR
+    3-2 SWS システムクロック スイッチ ステータス(読み取り専用)
+    1-0 SW システムクロック スイッチ
+    RCC->PLLCFGR   
+    22 PLLSRC PLLとPLLI2Sのクロックソースセレクタ?
+    17-16 PLLP PPLのP(3番目)ディバイダ VCO frequency / PLLP with PLLP = 2, 4, 6, or 8
+    14-6 PLLN PLLのN(2番目)の逓倍器｡VCO input frequency × PLLN with 50 􏰇 PLLN 􏰇 432
+    !!!! PLLNはPLLがOFFのとき書き込む
+    5-0 PLLM PLLのM(1番目)ディバイダ
+    RCC->CR
+    25 PLLRDY PLLが0.アンロック､1.ロックか
+    24 PLLON PLLが0.OFF,1.ON
+    まずPLLCFGR PLL M N P を設定し､PLLSRCをHSIにし､CR PLLON(RDY) にし､ SW(RDY)でスイッチする｡
+    */

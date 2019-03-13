@@ -1,0 +1,6 @@
+.vscode
+.DS_store
+obj
+*.bin
+*.out
+*.elf

@@ -1,6 +1,6 @@
 #include "F446_init.h"
 #include "GPIO_446.h"
-//#include "Timer_446.h"
+#include "Timer_446.h"
 #include "UART_446.h"
 #include "printf.h"
 //#include "midi_base.h"
@@ -94,23 +94,31 @@ void gpio_for_adc() {
 //  M A I N
 // =====================================================================================================================
 int main(void)
-{
+{   
+    uint32_t count = 0;
     HSE_PLL_init(); // System Clock:180MHz 
    
     //GPIO_init();
-    gpio_for_adc();
-
+    //gpio_for_adc();
+    //DAC_init();
+    TIM2_init();
     UART2_init(); // 115200HzでNucleo USBから出力 printfで使用可能
     init_printf(PutcUSART2);
-    ADC1_init_2();
+    //ADC1_init_2();
 
     while(1){
-        delay(1000000);
-        printf("1 %x\n",ADC1_read(ADC1_PA7));
-        printf("2 %x\n",ADC1_read(ADC1_PB0));
-        printf("2 %x\n",ADC1_read(ADC1_PA1));
-        printf("4 %x\n",ADC1_read(ADC1_PC0));
-        printf("5 %x\n",ADC1_read(ADC1_PC3));
-        printf("6 %x\n",ADC1_read(ADC1_PA7));
+        printf("s: %x\n",TIM2->CR1);
+        TIM2_start();
+        delay(100);
+        TIM2_stop();
+        printf("s: %x\n",TIM2->CR1);
+        printf("%x\n",TIM2_read());
+        printf("\n");
+
+        // DAC1->DHR12R1 = 0xFFF - count;
+        // DAC1->DHR12R2 = 0xFFF - count;
+        // DAC1->SWTRIGR = (0b1 << DAC_SWTRIGR_SWTRIG2_Pos) | (0b1 << DAC_SWTRIGR_SWTRIG1_Pos); // 1で有効 アウトプットされるとハードリセット
+        // count++;
+        // if(count == 0xFFF){count = 0;}
     };
 }

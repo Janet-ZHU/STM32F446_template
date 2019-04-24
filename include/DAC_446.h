@@ -1,18 +1,16 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// タイマー関係
-// 2019.2.3 sakai created.
+// DACの設定
+// 2019.4 sakai created.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#ifndef TIMER_446_H
-#define TIMER_446_H
+#ifndef DAC_446_H
+#define DAC_446_H
 
 #include "stm32f446xx.h"
 
-void TIM2_init();
-void TIM2_start();
-void TIM2_stop();
-uint32_t TIM2_status();
-uint32_t TIM2_read();
-void TIM2_Tick_init();
-void TIM2_IRQHandler();
+void DAC_init();
+void DAC_PA4_init();
+void DAC_PA5_init();
+void DAC12_data_u12(uint32_t data);
+void DAC12_outputTrigger(void);
 #endif

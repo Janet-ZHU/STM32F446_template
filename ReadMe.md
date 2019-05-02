@@ -274,3 +274,21 @@ FCLKはFPUフリーランニングクロックでCortex®-M4として動作し�
 ## MCO 
 PA8 MCO1
 PC9 MCO2
+
+#ADC convert code
+```c
+void analogout_write(dac_t *obj, float value)
+{
+    MBED_ASSERT(obj);
+    uint16_t count_val = 0;
+    if (value < 0.0f) {
+        count_val = 0;
+    } else if (value > 1.0f) {
+        count_val = MAX_VAL_10BIT;
+    } else {
+        count_val = (uint16_t)(value * (float)MAX_VAL_10BIT);
+    }
+    dac_chan_write(&dac_instance, DAC_CHANNEL_0, count_val);
+
+}
+```

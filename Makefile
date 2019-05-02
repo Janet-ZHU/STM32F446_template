@@ -1,5 +1,4 @@
-.SUFFIXES:
-MAKEFLAGS += --no-builtin-rules
+
 
 # Minimal makefile for STM32F3 Neucleo board.
 TARGET := arm-none-eabi
@@ -13,13 +12,20 @@ STFLASH := st-flash
 STUTIL := st-util
 PORT := /dev/ttyACM0
 
-CFLAGS = -g3 -mcpu=cortex-m4 -mtune=cortex-m4 -march=armv7e-m  -mthumb -nostdlib -O0 -ffunction-sections -fdata-sections -Wl,--gc-sections -std=c99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16  -D__FPU_PRESENT
-INCLUDE = -I./include
+CFLAGS = -g3 -mcpu=cortex-m4 -mtune=cortex-m4 -march=armv7e-m  -mthumb  -O0 -ffunction-sections -fdata-sections -Wl,--gc-sections -std=c99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16  -D__FPU_PRESENT 
+CMSISLIB = ./official/CMSIS/
+CMSIS_CORE = $(CMSISLIB)/core
+CMSIS_DSP = $(CMSISLIB)/DSP
+MATHLIB = $(CMSISLIB)/Lib/ARM/arm_cortexM4lf_math.lib
+INCLUDE = ./include
 #INCPATHS = ./include 
+
+INCPATHS = $(CMSIS_CORE) $(CMSIS_DSP)/Include $(INCLUDE)
+#INCPATHS = $(INCLUDE)
 
 INCLUDES     = $(addprefix -I ,$(INCPATHS))
 
-LDFLAGS = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mtune=cortex-m4
+LDFLAGS = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mtune=cortex-m4 -lm
 
 OBJDIR = obj
 
@@ -59,7 +65,7 @@ $(OBJECTNAME).out: $(OBJECTS)
 	$(LD) -T $(MEMORYMAP) $(OBJECTS) $(CFLAGS)  $(LDFLAGS) -o $(OBJECTNAME).out
 
 $(OBJDIR)/%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJDIR)/%.o: %.s
 	$(AS) -g $< -o $@

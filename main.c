@@ -2,11 +2,13 @@
 #include "GPIO_446.h"
 #include "Timer_446.h"
 #include "UART_446.h"
-//#include "printf.h"
+#include "printf.h"
 //#include "midi_base.h"
 #include "fifo.h"
 #include "DMA_446.h"
 #include "ADC_446.h"
+#include "arm_math.h"
+#include "DAC_446.h"
 
 
 unsigned int message[3] = {0xF9,0xF7,0xF5};
@@ -96,39 +98,25 @@ void gpio_for_adc() {
 int main(void)
 {   
     uint32_t count = 0;
-    volatile float fnk1=0;
+    volatile int stat;
+    float32_t sqrt_in[] = {2,3,4,5};
+    float32_t sqrt_out[] = {0,0,0,0};
     HSE_PLL_init(); // System Clock:180MHz 
    
     //GPIO_init();
     //gpio_for_adc();
-    //DAC_init();
+    DAC_init();
     TIM2_init();
     UART2_init(); // 115200HzでNucleo USBから出力 printfで使用可能
-    //init_printf(PutcUSART2);
+    init_printf(PutcUSART2);
     //ADC1_init_2();
     TIM2_start();
     while(1){
-        //TIM2->CNT = 0;
-        //printf("%d\n",TIM2->CNT);
-        //TIM2->CNT = 0;
-        delay(100000);
-        TIM2_start();
-        fnk1 = 0.0f;
-        for (int i = 1;i < 50000000;i += 4) {
-            fnk1 += 4.0f / (float)(i) - 4.0f / (float)(i + 2) + (3.0f + 2.1f / 3.5f);
-        }
-        //printf(" %x\n",fnk1);
-        TIM2_stop();
-        count = TIM2->CNT;
-        //printf("%d\n",count);
-        //printf("%x\n",TIM2_read());
-        //printf("s: %x\n",TIM2->CR1);
-        //printf("\n");
-
-        // DAC1->DHR12R1 = 0xFFF - count;
-        // DAC1->DHR12R2 = 0xFFF - count;
-        // DAC1->SWTRIGR = (0b1 << DAC_SWTRIGR_SWTRIG2_Pos) | (0b1 << DAC_SWTRIGR_SWTRIG1_Pos); // 1で有効 アウトプットされるとハードリセット
-        // count++;
-        // if(count == 0xFFF){count = 0;}
+        for( float x=0.0f; x<(2.0f*3.14f); x+=0.001f){
+        volatile float y = arm_sin_f32(x);  // CMSIS DSPライブラリ版
+        DAC12_data_u12((uint32_t)((y+1.0f)*20000.0f)) ;
+        //printf(">%d\n",((uint32_t)(y*10000.0f)));
+        DAC12_outputTrigger();
+    }
     };
 }

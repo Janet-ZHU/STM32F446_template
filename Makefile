@@ -1,17 +1,25 @@
+.SUFFIXES:
+MAKEFLAGS += --no-builtin-rules
+
 # Minimal makefile for STM32F3 Neucleo board.
 TARGET := arm-none-eabi
 
 # devtools
 CC := $(TARGET)-gcc
-LD := $(TARGET)-ld
+LD := $(TARGET)-gcc
 AS := $(TARGET)-as
 OBJCOPY := $(TARGET)-objcopy
 STFLASH := st-flash
 STUTIL := st-util
 PORT := /dev/ttyACM0
 
-CFLAGS = -g3 -mcpu=cortex-m4 -mthumb -nostdlib -O0 -ffunction-sections -fdata-sections -Wl,--gc-sections -std=c99
+CFLAGS = -g3 -mcpu=cortex-m4 -mtune=cortex-m4 -march=armv7e-m  -mthumb -nostdlib -O0 -ffunction-sections -fdata-sections -Wl,--gc-sections -std=c99 -mfloat-abi=softfp -mfpu=fpv4-sp-d16  -D__FPU_PRESENT
 INCLUDE = -I./include
+#INCPATHS = ./include 
+
+INCLUDES     = $(addprefix -I ,$(INCPATHS))
+
+LDFLAGS = -mcpu=cortex-m4 -march=armv7e-m -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -mtune=cortex-m4
 
 OBJDIR = obj
 
@@ -48,7 +56,7 @@ $(OBJECTNAME).bin: $(OBJECTNAME).out
 	$(OBJCOPY) $(OBJECTNAME).out -I ihex -O binary $(OBJECTNAME).bin
 
 $(OBJECTNAME).out: $(OBJECTS)
-	$(LD) -T $(MEMORYMAP) $(OBJECTS) -o $(OBJECTNAME).out
+	$(LD) -T $(MEMORYMAP) $(OBJECTS) $(CFLAGS)  $(LDFLAGS) -o $(OBJECTNAME).out
 
 $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@

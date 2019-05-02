@@ -2,7 +2,7 @@
 #include "GPIO_446.h"
 #include "Timer_446.h"
 #include "UART_446.h"
-#include "printf.h"
+//#include "printf.h"
 //#include "midi_base.h"
 #include "fifo.h"
 #include "DMA_446.h"
@@ -41,7 +41,7 @@ void USART3_IRQHandler() {
     static int flag = 0;
     static unsigned int counter = 0;
     
-    printf("%x\n", USART2->DR);
+    //printf("%x\n", USART2->DR);
     USART2_IRQ_disable(); // TXEIE Off
     flag =! flag; // toggle flag
 
@@ -61,7 +61,7 @@ void USART2_IRQHandler() {
     static int flag = 0;
     static unsigned int counter = 0;
     uint8_t data = USART2->DR;
-    printf("%x\n", data);
+    //printf("%x\n", data);
     USART2_IRQ_disable(); // TXEIE Off
     flag =! flag; // toggle flag
 
@@ -96,6 +96,7 @@ void gpio_for_adc() {
 int main(void)
 {   
     uint32_t count = 0;
+    volatile float fnk1=0;
     HSE_PLL_init(); // System Clock:180MHz 
    
     //GPIO_init();
@@ -103,17 +104,26 @@ int main(void)
     //DAC_init();
     TIM2_init();
     UART2_init(); // 115200HzでNucleo USBから出力 printfで使用可能
-    init_printf(PutcUSART2);
+    //init_printf(PutcUSART2);
     //ADC1_init_2();
-
+    TIM2_start();
     while(1){
-        printf("s: %x\n",TIM2->CR1);
+        //TIM2->CNT = 0;
+        //printf("%d\n",TIM2->CNT);
+        //TIM2->CNT = 0;
+        delay(100000);
         TIM2_start();
-        delay(100);
+        fnk1 = 0.0f;
+        for (int i = 1;i < 50000000;i += 4) {
+            fnk1 += 4.0f / (float)(i) - 4.0f / (float)(i + 2) + (3.0f + 2.1f / 3.5f);
+        }
+        //printf(" %x\n",fnk1);
         TIM2_stop();
-        printf("s: %x\n",TIM2->CR1);
-        printf("%x\n",TIM2_read());
-        printf("\n");
+        count = TIM2->CNT;
+        //printf("%d\n",count);
+        //printf("%x\n",TIM2_read());
+        //printf("s: %x\n",TIM2->CR1);
+        //printf("\n");
 
         // DAC1->DHR12R1 = 0xFFF - count;
         // DAC1->DHR12R2 = 0xFFF - count;

@@ -2,17 +2,19 @@
 #include "GPIO_446.h"
 #include "Timer_446.h"
 #include "UART_446.h"
-#include "printf.h"
 //#include "midi_base.h"
 #include "fifo.h"
 #include "DMA_446.h"
 #include "ADC_446.h"
 #include "arm_math.h"
 #include "DAC_446.h"
+#include "xprintf.h"
 
 
-unsigned int message[3] = {0xF9,0xF7,0xF5};
-unsigned int out_buf[1] = {0};
+// =====================================================================================================================
+//  printf
+// =====================================================================================================================
+
 
 
 // =====================================================================================================================
@@ -97,6 +99,8 @@ void gpio_for_adc() {
 // =====================================================================================================================
 int main(void)
 {   
+    xdev_out(UART2_send_uchar);
+
     uint32_t count = 0;
     volatile int stat;
     float32_t sqrt_in[] = {2,3,4,5};
@@ -108,14 +112,14 @@ int main(void)
     DAC_init();
     TIM2_init();
     UART2_init(); // 115200HzでNucleo USBから出力 printfで使用可能
-    init_printf(PutcUSART2);
+    //init_printf(PutcUSART2);
     //ADC1_init_2();
     TIM2_start();
     while(1){
         for( float x=0.0f; x<(2.0f*3.14f); x+=0.001f){
         volatile float y = arm_sin_f32(x);  // CMSIS DSPライブラリ版
         DAC12_data_u12((uint32_t)((y+1.0f)*20000.0f)) ;
-        //printf(">%d\n",((uint32_t)(y*10000.0f)));
+        xprintf("hello");
         DAC12_outputTrigger();
     }
     };

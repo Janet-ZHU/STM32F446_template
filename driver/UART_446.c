@@ -70,6 +70,11 @@ inline void UART2_send_char(char c){
     USART2-> DR = c; 
 }
 
+void UART2_send_uchar(unsigned char c){
+	while (!(USART2->SR & USART_SR_TXE)); //SRのTXEが0のとき､送信データは入力できないので待つ｡
+    USART2-> DR = c; 
+}
+
 void PutcUSART2(char c)
 {
     if(c == '\n'){

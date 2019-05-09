@@ -9,12 +9,20 @@
 #include "arm_math.h"
 #include "DAC_446.h"
 #include "xprintf.h"
+#include <stdio.h>
 
 
 // =====================================================================================================================
 //  printf
 // =====================================================================================================================
-
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+void __io_putchar(uint8_t ch) {
+UART2_send_uint(ch);
+}
 
 
 // =====================================================================================================================
@@ -100,6 +108,7 @@ void gpio_for_adc() {
 int main(void)
 {   
     xdev_out(UART2_send_uchar);
+    setbuf(stdout, NULL);
 
     uint32_t count = 0;
     volatile int stat;
@@ -119,8 +128,9 @@ int main(void)
         for( float x=0.0f; x<(2.0f*3.14f); x+=0.001f){
         volatile float y = arm_sin_f32(x);  // CMSIS DSPライブラリ版
         DAC12_data_u12((uint32_t)((y+1.0f)*20000.0f)) ;
-        xprintf("hello");
+        printf(">%f\n",3.141f);
         DAC12_outputTrigger();
+        delay(0xAFFF);
     }
     };
 }

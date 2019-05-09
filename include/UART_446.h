@@ -13,5 +13,6 @@ void UART2_init();
 void UART2_RX_Intrpt();
 void UART2_send_char(char c);
 void UART2_send_uchar(unsigned char c);
+void UART2_send_uint(uint8_t c);
 void PutcUSART2(char c);
 #endif

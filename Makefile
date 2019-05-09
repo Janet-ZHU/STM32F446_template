@@ -182,10 +182,11 @@ $(OBJDIR):
 .PHONY: clean flash
 
 st-flash: $(NAME).bin
-	$(STFLASH) write $(NAME).bin 0x8000000
+	make all
+	$(STFLASH) write $(OBJDIR)/$(NAME).bin 0x8000000
 
 st-util: $(NAME).bin
-	$(STUTIL) $(NAME).bin
+	$(STUTIL) $(OBJDIR)/$(NAME).bin
 
 #######################################
 # clean up

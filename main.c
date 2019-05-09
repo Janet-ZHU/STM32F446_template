@@ -128,7 +128,7 @@ int main(void)
         for( float x=0.0f; x<(2.0f*3.14f); x+=0.001f){
         volatile float y = arm_sin_f32(x);  // CMSIS DSPライブラリ版
         DAC12_data_u12((uint32_t)((y+1.0f)*20000.0f)) ;
-        printf(">%f\n",3.141f);
+        printf(">%f\n",3.1415f);
         DAC12_outputTrigger();
         delay(0xAFFF);
     }
